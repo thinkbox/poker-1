@@ -1,0 +1,775 @@
+<style>
+html {
+    font-family: verdana;
+    font-size: 11pt;
+    webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    overflow: hidden;
+}
+ul li {
+    height: 120px;
+    width: 90px;
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(60%, #FFFFFF), color-stop(100%, #EEEEEE));
+    background-image: -moz-linear-gradient(top, #FFFFFF 60%, #EEEEEE 100%);
+    background-image: -ms-linear-gradient(top, #FFFFFF 60%, #EEEEEE 100%);
+    background-image: -o-linear-gradient(top, #FFFFFF 60%, #EEEEEE 100%);
+    margin-left: 0px;
+    list-style-type: none;
+    padding: 0px;
+    -webkit-box-shadow: 0 0 4px rgba(0,0,0,0.3);
+    -moz-box-shadow: 0 0 4px rgba(0,0,0,0.3);
+    box-shadow: 0 0 4px rgba(0,0,0,0.3);
+    border-radius: 2px;
+    cursor: pointer;
+    font-size: 12pt;
+}
+ul {
+    width: 1000px;
+    height: 180px;
+    overflow: hidden;
+    display: none;
+    webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.number {
+    position: relative;
+    top: 6px;
+    left: -31px;
+}
+#startgame {
+    position: absolute;
+    top: 40%;
+    left: 45%;
+    height: 30px;
+    width: 100px;
+    font-size: 10pt;
+    font-family: verdana;
+    color: #EEE;
+    padding-top: 10px;
+    background-color: #33A1DE;
+    box-shadow: 0 0 3px rgba(0,0,0,0.4);
+    -webkit-box-shadow: 0 0 3px rgba(0,0,0,0.4);
+    -moz-box-shadow: 0 0 3px rgba(0,0,0,0.4);
+    cursor: pointer;
+}
+#startgame:hover {
+    text-shadow: 0 0 1px white;
+}
+.heart {
+    position: relative;
+    width: 90px;
+    height: 80px;
+    margin: 5px 0px;
+    -webkit-transform: scale(0.5);
+       -moz-transform: scale(0.5);
+        -ms-transform: scale(0.5);
+         -o-transform: scale(0.5);
+            transform: scale(0.5);
+    left: -2px;
+}
+.heart:before,
+.heart:after {
+    position: absolute;
+    content: "";
+    left: 50px;
+    top: 0;
+    width: 50px;
+    height: 80px;
+    background: red;
+    -moz-border-radius: 40px 40px 0 0;
+    border-radius: 40px 40px 0 0;
+    -webkit-transform: rotate(-45deg);
+       -moz-transform: rotate(-45deg);
+        -ms-transform: rotate(-45deg);
+         -o-transform: rotate(-45deg);
+            transform: rotate(-45deg);
+    -webkit-transform-origin: 0 100%;
+       -moz-transform-origin: 0 100%;
+        -ms-transform-origin: 0 100%;
+         -o-transform-origin: 0 100%;
+            transform-origin: 0 100%;
+}
+.heart:after {
+    left: 0;
+    -webkit-transform: rotate(45deg);
+       -moz-transform: rotate(45deg);
+        -ms-transform: rotate(45deg);
+         -o-transform: rotate(45deg);
+            transform: rotate(45deg);
+    -webkit-transform-origin: 100% 100%;
+       -moz-transform-origin: 100% 100%;
+        -ms-transform-origin: 100% 100%;
+         -o-transform-origin: 100% 100%;
+            transform-origin :100% 100%;
+}
+#circle { 
+    width: 100px; 
+    height: 100px; 
+    background: black; 
+    -moz-border-radius: 50px;
+    -webkit-border-radius: 50px; 
+    -o-border-radius: 50px;
+    -ms-border-radius: 50px;
+    border-radius: 50px;
+    position:absolute;
+    left: 61px;
+    z-index: 100;
+} 
+#circle:before { 
+    width: 100px; 
+    height: 100px; 
+    background: black; 
+    -moz-border-radius: 50px; 
+    -webkit-border-radius: 50px; 
+    -ms-border-radius: 50px;
+    -o-border-radius: 50px;
+    border-radius: 50px;
+    position:absolute;
+    left:-60px;
+    top:80px;
+    z-index: 100;
+    content: "";
+}
+
+#circle:after { 
+    width: 100px; 
+    height: 100px; 
+    background: black; 
+    -moz-border-radius: 50px; 
+    -webkit-border-radius: 50px; 
+    border-radius: 50px;
+    position:absolute;
+    left: 60px;
+    top:80px;
+    z-index: 100;
+    content: "";
+    } 
+
+#triangle {
+    width: 0; 
+    height: 0; 
+    border-left: 75px solid transparent; 
+    border-right: 75px solid transparent; 
+    border-bottom: 105px solid black;
+    position:absolute;
+    top:40px;
+    left: 36px;
+    z-index: 100;
+}
+#base {
+    background: none repeat scroll 0 0 black;
+    height: 67px;
+    left: -2px;
+    position: absolute;
+    top: 140px;
+    width: 200px;
+    z-index: 0; 
+}
+#base:before {
+    width:0px;
+    height:10px;
+    position:absolute;
+    border-left: 50px solid white;
+    border-right: 50px solid white;
+    border-top: 10px solid white;
+    border-bottom: 50px solid white;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px; 
+    border-bottom-left-radius: 0px; 
+    border-bottom-right-radius: 60px;
+    left: 0px;
+    content: "";
+}
+
+#base:after {
+    width:0px;
+    height:10px;
+    position:absolute;
+    border-left: 50px solid white;
+    border-right: 50px solid white;
+    border-top: 10px solid white;
+    border-bottom: 50px solid white;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px; 
+    border-bottom-left-radius: 60px; 
+    border-bottom-right-radius: 0px;
+    left: 125px;
+    content: "";
+}
+.suit {
+    position: absolute;
+    top: 37px;
+    left: 20px;
+    -webkit-transform: scale(0.23);
+       -moz-transform: scale(0.23);
+        -ms-transform: scale(0.23);
+         -o-transform: scale(0.23);
+            transform: scale(0.23);
+}
+.diamond {
+    width: 0;
+	height: 0;
+	border: 50px solid transparent;
+	border-bottom: 70px solid red;
+	position: relative;
+	top: -40px;
+    left: -4px;
+    -webkit-transform: scale(0.384);
+       -moz-transform: scale(0.384);
+        -ms-transform: scale(0.384);
+         -o-transform: scale(0.384);
+            transform: scale(0.384);
+}
+.diamond:after {
+    content: '';
+	position: absolute;
+	left: -50px;
+    top: 70px;
+	width: 0;
+	height: 0;
+	border: 50px solid transparent;
+	border-top: 70px solid red;
+}
+.spades {
+    position: relative;
+    width: 90px;
+    height: 80px;
+    margin: 5px 0px;
+    -webkit-transform: scale(-0.48);
+       -moz-transform: scale(-0.48);
+        -ms-transform: scale(-0.48);
+         -o-transform: scale(-0.48);
+            transform: scale(-0.48);
+    left: -18px;
+    z-index: 1;
+}
+.spades:before,
+.spades:after {
+    position: absolute;
+    content: "";
+    left: 50px;
+    top: 0;
+    width: 50px;
+    height: 80px;
+    background: black;
+    -moz-border-radius: 40px 40px 0 0;
+    border-radius: 40px 40px 0 0;
+    -webkit-transform: rotate(-45deg);
+       -moz-transform: rotate(-45deg);
+        -ms-transform: rotate(-45deg);
+         -o-transform: rotate(-45deg);
+            transform: rotate(-45deg);
+    -webkit-transform-origin: 0 100%;
+       -moz-transform-origin: 0 100%;
+        -ms-transform-origin: 0 100%;
+         -o-transform-origin: 0 100%;
+            transform-origin: 0 100%;
+}
+.spades:after {
+    left: 0;
+    -webkit-transform: rotate(45deg);
+       -moz-transform: rotate(45deg);
+        -ms-transform: rotate(45deg);
+         -o-transform: rotate(45deg);
+            transform: rotate(45deg);
+    -webkit-transform-origin: 100% 100%;
+       -moz-transform-origin: 100% 100%;
+        -ms-transform-origin: 100% 100%;
+         -o-transform-origin: 100% 100%;
+            transform-origin :100% 100%;
+}
+#spadesbase {
+    background: none repeat scroll 0 0 black;
+    height: 65px;
+    left: -78.5px;
+    position: absolute;
+    top: 28px;
+    width: 200px;
+    z-index: 0; 
+    -webkit-transform: scale(0.23);
+       -moz-transform: scale(0.23);
+        -ms-transform: scale(0.23);
+         -o-transform: scale(0.23);
+            transform: scale(0.23);
+}
+#spadesbase:before {
+    width:0px;
+    height:10px;
+    position:absolute;
+    border-left: 50px solid white;
+    border-right: 50px solid white;
+    border-top: 10px solid white;
+    border-bottom: 50px solid white;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px; 
+    border-bottom-left-radius: 0px; 
+    border-bottom-right-radius: 60px;
+    left: 0px;
+    content: "";
+}
+
+#spadesbase:after {
+    width:0px;
+    height:10px;
+    position:absolute;
+    border-left: 50px solid white;
+    border-right: 50px solid white;
+    border-top: 10px solid white;
+    border-bottom: 50px solid white;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px; 
+    border-bottom-left-radius: 60px; 
+    border-bottom-right-radius: 0px;
+    left: 125px;
+    content: "";
+}
+.spades-wrapper {
+    height: 70px;
+    width: 50px;
+    position: relative;
+    top: -5px;
+}
+#status {
+    top: 30px;
+    position: absolute;
+    left: 45%;
+}
+#name-wrapper {
+    display: none;
+    top: 40%;
+    left: 40%;
+    position: absolute;
+}
+#name-input {
+    width: 100px;
+}
+#enter {
+    width: 70px;
+    height: 25px;
+    background-color: #EEE;
+    position: relative;
+    top: -28px;
+    left: 120px;
+    cursor: default;
+    box-shadow: 0 0 3px rgba(0,0,0,0.4);
+    font-family: helvetica, sans-serif;
+    font-weight: bold;
+    color: #BBB;
+    text-align: center;
+    font-size: 10pt;
+    padding-top: 7px;
+}
+#enter:hover {
+    box-shadow: 0 0 3px rgba(0,0,0,0.3);
+    text-shadow: 0 0 1px rgba(0,0,0,0.2);
+}
+#error {
+    font-size: 10pt;
+    color: red;
+    position: absolute;
+    left: 35%;
+}
+</style>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+    var doneAnimating = false;
+    var game = new Game();
+
+    function sortMD(a,b)
+    {
+        // this sorts the array using the second element    
+        return ((a[1] < b[1]) ? -1 : ((a[1] > b[1]) ? 1 : 0));
+    }
+    
+    function Deck() {
+        var deck = new Array();
+        var seedArray = new Array();
+        
+        this.getDeck = function() {
+            return deck;
+        }
+        
+        this.initialize = function() {
+            if(deck.length < 1) {
+                for(var x = 4; x <= 55; x++) {
+                    deck.push(x/4);
+                }
+                dupeDeck = deck;
+            } else {
+                return "Error: deck already initialized."
+            }
+        };
+            
+        this.shuffle = function() {
+            if(this.isSetup() == true) {
+                var tempDeck = new Array();
+                for(var i = 0; i < deck.length; i++) {
+                    seed = Math.random();
+                    secArray = new Array();
+                    secArray.push(i);
+                    secArray.push(seed);
+                    seedArray.push(secArray);
+                }
+                seedArray.sort(sortMD);
+                for(var d = 0; d < deck.length; d++) {
+                    index = seedArray[d][0];
+                    tempDeck[d] = deck[index];
+                }
+                deck = tempDeck;
+                tempDeck = [];
+                seedArray = [];
+            } else {
+                return "Error: deck not initialized";
+            }
+        };
+        
+        this.isSetup = function() {
+            if(deck.length < 1) {
+                return false;
+            } else {
+                return true;
+            }
+        };
+    }
+    
+    function checkName() {
+        $("#name-wrapper").css("display","block");
+        $("#name").text("Name:");
+        $("#enter").text("Enter");
+        //$("ul").css("display","block");
+        //playerhand.show(0);
+    }
+    
+    function Hand() {
+        var hand = new Array();
+        
+        this.deal = function () {
+            if (deck.getDeck().length > 0 && (hand.length < 1 || hand.length === undefined)) {
+                hand = deck.getDeck().splice(0,5);
+            } else {
+                return "Error: hand already dealt";
+            }
+        };
+        
+        this.show = function(i) {
+            hand.sort(function(a,b) { return a-b} );
+            if(i <= 4 && i >= 0) {
+                $("ul").css("display","block");
+                var top;
+                c1 = hand[i];
+                cnum = Math.floor(Math.abs(c1));
+                pc1 = Math.abs(c1) - cnum;
+                pc1 *= 4;
+                pc1 -= 1;
+                cnum = checkFace(cnum);
+                suit = "SHCD".substr(pc1,1);
+                suit = checkSuit(suit);
+                $("#card" + (i+1) + " > .number").text(cnum);
+                switch(suit) {
+                    case "Hearts":
+                        $("#card" + (i+1) + " > div").attr("class","heart");
+                        break;
+                    case "Clubs":
+                        $("#card" + (i+1) + " > div").html("<div id=\"circle\"></div><div id=\"triangle\"></div><div id=\"base\"></div>");
+                        break;
+                    case "Diamonds":
+                        $("#card" + (i+1) + " > div").attr("class","diamond");
+                        break;
+                    case "Spades":
+                        $("#card" + (i+1) + " > div").html("<div class='spades'></div><div id='spadesbase'></div>");
+                        $("#card" + (i+1) + " > div").attr("class","spades-wrapper");
+                        break;
+                    default:
+                        console.log("hi");
+                }
+                switch(i+1) {
+                    case 1:
+                        top = "23";
+                        break;
+                    case 2:
+                        top = "-115";
+                        break;
+                    case 3:
+                        top = "-235";
+                        break;
+                    case 4:
+                        top = "-355";
+                        break;
+                    case 5:
+                        top = "-475";
+                        break;
+                    default:
+                        top = "3";/*"3";*/
+                }
+                $("#card" + (i+1)).animate({top:top}, {duration: 1000, complete: function() {
+                    playerhand.show(i+1);
+                    if(i == 4) {
+                        doneAnimating = true;
+                        $("#status").text("Your turn");
+                    }
+                }});
+            }
+        };
+        
+        function checkFace(cnum) {
+            if(cnum <= 10 && cnum != 1) {
+                return cnum;
+            } else {
+                switch(cnum) {
+                    case 1:
+                        cnum = "A";
+                        return cnum;
+                    case 11:
+                        cnum = "J";
+                        return cnum;
+                    case 12:
+                        cnum = "Q";
+                        return cnum;
+                    case 13:
+                        cnum = "K";
+                        return cnum;
+                    default:
+                        return "Error";
+                }
+            }
+        }
+        
+        function checkSuit(suit) {
+            switch(suit) {
+                case "S":
+                    return "Spades";
+                case "H":
+                    return "Hearts";
+                case "C":
+                    return "Clubs";
+                case "D":
+                    return "Diamonds";
+                default:
+                    return suit;
+            }
+        }
+        
+        this.getHand = function() {
+            return hand;
+        }
+    }
+    
+    var deck = new Deck();
+    deck.initialize();
+    deck.shuffle();
+    var go = false;
+    var startclicked = false;
+    $("#startgame").click(function() {
+        if(startclicked == false && $("#startgame").css("opacity") != "0") {
+            startclicked = true;
+            $("#startgame").animate({opacity:'0'}, {duration: 1000, complete: function() {
+                    
+                    //playerhand = new Hand();
+                    //playerhand.deal();
+                    
+                    $("#startgame").css({"cursor":"default", "top":"1000px"});
+                    checkName();
+                }
+            });
+        
+        $("li").mouseenter(function() {
+            for(var i = 1; i <= 5; i++) {
+                if($("#card" + i).is(":animated")) {
+                    go = false;
+                } 
+            }
+            if(!$(this).is(":animated") && doneAnimating && go && $(this).attr("clicked") == "false") {
+                var top = $(this).css("top");
+                top.replace("px","");
+                top = parseInt(top);
+                top -= 10;
+                $(this).css("top",top);
+            }
+        }).mouseleave(function() {
+            if(!$(this).is(":animated") && doneAnimating && go && $(this).attr("clicked") == "false") {
+                var top = $(this).css("top");
+                top.replace("px","");
+                top = parseInt(top);
+                top += 10;
+                $(this).css("top",top);
+            }
+            go = true;
+        })
+        }
+    });
+    
+    $("ul li").click(function() {
+        if(go != false) {
+            var clicked = $(this).attr("clicked");
+            if(clicked == "false") {
+                clicked = "true";
+                $(this).css("box-shadow","0 0 4px #EE5C42")
+            } else {
+                clicked = "false";
+                $(this).css("box-shadow","0 0 4px rgba(0,0,0,0.3)")
+            }
+            $(this).attr("clicked",clicked);
+            
+        }
+    });
+    function nameSend() {
+        var name = $("#name-input").val().trim();
+        if(name != "") {
+            $.post("checkname.php",
+                   {"name":name},
+                   function(data) {
+                       if(data == "waiting") {
+                            $("#error").css({"top":"40%",
+                                             "left":"44%",
+                                             "color":"green"});
+                            $("#error").text("Waiting for an opponent...");
+                            $("#name-wrapper").css({"top":"1000px","opacity":"0"});
+                            game.setup(name);
+                            var checkOpponent = setInterval(function() {
+                                $.post("checkopponent.php",
+                                       {name: name},
+                                       function(data) {
+                                           if(data != "checkopponentfailed") {
+                                               console.log("You have successfully started a game with " + data);
+                                               stopCheck();
+                                               $("#error").css({"top":"2000px","opacity":"0"});
+                                               playerhand.show(0);
+                                           }
+                                       });
+                            }, 2000)
+                            //playerhand.show(0);
+                       } else if(data == "canstart"){
+                           $("#name-wrapper").css("top","1000px");
+                           playerhand.show(0);
+                       } else {
+                            $("#error").text("Sorry, that name is taken. Please enter another one. " + data);
+                       }
+                       function stopCheck() {
+                           clearInterval(checkOpponent);
+                       }
+                   }
+            );
+        }
+    }
+    
+    function serialize(array) {
+        if(array instanceof Array) {
+            var arlen = array.length;
+            var str = "";
+            for(var i = 0; i < arlen; i++) {
+                num = array[i].toString();
+                str = str + num;
+                if(i != arlen - 1) {
+                    str += ",";
+                }
+            }
+            return str;
+        } else {
+            return 0;
+        }
+    }
+    
+    function unserialize(str) {
+        if(str instanceof String) {
+            var newstr = str.split(",");
+            return newstr;
+        } else {
+            return 0;
+        }
+    }
+    
+    function Game() {
+        var deck = new Deck();
+        deck.initialize();
+        deck.shuffle();
+        var state = "notready";
+        
+        this.setDeck = function(toSet) {
+            if(typeof toSet == "array") {
+                deck = toSet;
+            } else {
+                console.log("Error: type mismatch.");
+            }
+        }
+        this.setup = function (name) {
+            playerhand.deal();
+            deckstr = serialize(deck.getDeck());
+            handstr = serialize(playerhand.getHand());
+            $.post("setup.php",
+                   {deck:deckstr,hand:handstr,name:name},
+                   function(data) {
+                        if(data == "success") {
+                            console.log("success!");
+                        } else {
+                            console.log("boo");
+                        }
+                   });
+        }
+        this.setState = function(sSet) {
+            state = sSet;
+        }
+        this.getState = function() {
+            return state;
+        }
+    }
+    
+    var playerhand = new Hand();
+    
+    $("#enter").click(function() {
+        nameSend();
+    });
+    
+    $("#name-input").keyup(function(event) {
+        if(event.which === 13) {
+            nameSend();
+        }
+    });
+    
+});
+
+</script>
+<html>
+<title>Poker</title>
+<center>
+<span id="status"></span><span id="pot"></span>
+<span id="money"></span>
+<span id="error"></span>
+<div id="name-wrapper">
+<span id="name">Name:</span>
+<input type="text" id="name-input">
+<div id="enter"></div>
+</div>
+<div id="fold"></div><div id="bet"></div></div id="call"></div>
+<p>
+<div id="startgame">Start Game</div>
+<ul style="position: absolute; top: 30%; left: -5%;">
+  <li id="card1" style="position: relative; left: -20%; top: 150px;" clicked="false">
+    <span class="number"></span><div class="suit"></div>
+  </li><br>
+  <li id="card2" style="position: relative; top: 50px; left: -8%;" clicked="false">
+    <span class="number"></span><div class="suit"></div>
+  </li>
+  <li id="card3" style="position: relative; top: 20px; left: 4%" clicked="false">
+    <span class="number"></span><div class="suit"></div>
+  </li>
+  <li id="card4" style="position: relative; top: 30px; left: 16%" clicked="false">
+    <span class="number"></span><div class="suit"></div>
+  </li>
+  <li id="card5" style="position: relative; top: 100px; left: 28%" clicked="false">
+    <span class="number"></span><div class="suit"></div>
+  </li>
+</ul>
+</html>
+</center>
+
+
+
