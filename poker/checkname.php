@@ -39,7 +39,7 @@ if($name != "") {
         }
         
         if($openid != "") {
-            mysql_query("UPDATE game_table SET player2='$name', open='0' WHERE id='$openid'");
+            mysql_query("UPDATE game_table SET player2='$name', open='0', pot='100', player2_money='4950' WHERE id='$openid'");
             echo "canstart";
         } else {
             $getmax = mysql_query("SELECT MAX(id) AS max_id FROM game_table");

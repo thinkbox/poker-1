@@ -1,6 +1,6 @@
 <?php
 
-$con = mysql_connect("localhost","alanrgan","root123");
+$con = mysql_connect("localhost","root","root123");
 if (!$con)
   {
   die('Could not connect: ' . mysql_error());
@@ -14,9 +14,11 @@ if($name != "") {
     
     while($row = mysql_fetch_array($getdeck)) {
         $deck = $row['deck'];
+        $opponent = $row['player1'];
     }
     $array = array();
     $array["deck"] = $deck;
+    $array["opponent"] = $opponent;
     echo json_encode($array);
 }
 

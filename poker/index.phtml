@@ -377,13 +377,25 @@ ul {
     position: absolute;
     left: 35%;
 }
+#pot {
+    position: absolute;
+    top: 54%;
+    left: 68%;
+    font-size: 10pt;
+}
+#money {
+    position: absolute;
+    top: 54%;
+    left: 22.5%;
+    font-size: 10pt;
+}
 </style>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
 <script type="text/javascript">
 $(document).ready(function() {
     var doneAnimating = false;
     var game = new Game();
-    var name = "";
+    var name = "", playernum, opponent;
 
     function sortMD(a,b)
     {
@@ -441,13 +453,16 @@ $(document).ready(function() {
             }
         };
         
-        this.update = function(name) {
-            $.post("updatedeck.php",
-                   {name: name},
-                   function() {
-                       
-                   }
-            );
+        this.update = function(name,deckstr) {
+            if(name != "") {
+                if(deckstr == "") {
+                    
+                } else if(typeof deckstr == "string") {
+                    $.post("updatedeck.php",
+                           {name: name, deck: deckstr}
+                    );
+                }
+            }
         }
         
         this.setDeck = function(toSet){
@@ -530,7 +545,12 @@ $(document).ready(function() {
                     playerhand.show(i+1);
                     if(i == 4) {
                         doneAnimating = true;
-                        $("#status").text("Your turn");
+                        turn = game.checkTurn();
+                        if(turn == playernum) {
+                            $("#status").text("Your turn");
+                        } else {
+                            $("#status").text(opponent + "'s turn");
+                        }
                     }
                 }});
             }
@@ -662,9 +682,13 @@ $(document).ready(function() {
                                        function(data) {
                                            if(data != "checkopponentfailed") {
                                                console.log("You have successfully started a game with " + data);
+                                               opponent = data;
                                                stopCheck();
                                                $("#error").css({"top":"2000px","opacity":"0"});
                                                playerhand.show(0);
+                                               $("#pot").text("Pot: 100");
+                                               $("#money").text("Money: 4950");
+                                               playernum = 1;
                                            }
                                        });
                             }, 2000)
@@ -674,11 +698,15 @@ $(document).ready(function() {
                            $.post("getcards.php",
                                   {name: name},
                                   function(data) {
+                                      playernum = 2;
                                       var obj = $.parseJSON(data);
                                       deckArray = unserialize(obj.deck);
+                                      opponent = obj.opponent;
                                       game.setDeck(deckArray);
                                       playerhand.deal();
                                       playerhand.show(0);
+                                      $("#pot").text("Pot: 100");
+                                      $("#money").text("Money: 4950");
                                       game.updateDeck(name);
                                   });
                        } else {
@@ -723,6 +751,8 @@ $(document).ready(function() {
         deck.initialize();
         deck.shuffle();
         var state = "notready";
+        var turn = 1;
+        var toggle = true;
         
         this.setDeck = function(toSet) {
             if(toSet instanceof Array) {
@@ -735,7 +765,6 @@ $(document).ready(function() {
             playerhand.deal();
             deckstr = serialize(deck.getDeck());
             handstr = serialize(playerhand.getHand());
-            console.log(deckstr);
             $.post("setup.php",
                    {deck: deckstr,hand: handstr,name: name},
                    function(data) {
@@ -758,7 +787,27 @@ $(document).ready(function() {
         }
         
         this.updateDeck = function(name) {
-            deck.update(name);
+            str = serialize(deck.getDeck());
+            deck.update(name,str);
+        }
+        
+        this.checkTurn = function() {
+            return turn;
+        }
+        
+        this.switchTurn = function() {
+            if(toggle) {
+                turn = 2;
+                $.post("updateturn.php",
+                       {turn: turn},
+                       function() {
+                           waiting();
+                       }
+                );
+            } else {
+                turn = 1;
+            }
+            toggle = !toggle;
         }
     }
     
@@ -789,6 +838,8 @@ $(document).ready(function() {
 <div id="enter"></div>
 </div>
 <div id="fold"></div><div id="bet"></div></div id="call"></div>
+<div id="keep"></div>
+<div id="discard"></div>
 <p>
 <div id="startgame">Start Game</div>
 <ul style="position: absolute; top: 30%; left: -5%;">
