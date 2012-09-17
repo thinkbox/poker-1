@@ -1,11 +1,11 @@
 <?php
 
-$con = mysql_connect("mysql0.db.koding.com","alanrgan_2d4098c","penguins666");
+$con = mysql_connect("mysql0.db.koding.com","localhost","root123");
 if (!$con)
   {
   die('Could not connect: ' . mysql_error());
 }
-mysql_select_db("alanrgan_2d4098c", $con);
+mysql_select_db("localhost", $con);
 
 $name = $_POST['name'];
 
