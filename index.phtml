@@ -386,9 +386,41 @@ ul {
     top: -470px;
     left: -170px;
     font-size: 10pt;
-} #fold { 	 position: relative; 	 top: 0px; 	 height: 23px; 	 width: 70px; 	 font-family: arial, sans-serif; 	 font-size: 10pt; 	 padding-top: 12px; 	 padding-bottom: 6px; 	 background: blue; 	 color: white; 	 box-shadow: 0 0 4px rgba(0,0,0,0.4); 	 left: -10px; 	 display: none; } #bet {     position: relative;     top: -41px;     height: 23px;     width: 70px;     font-family: arial, sans-serif;     font-size: 10pt;     padding-top: 12px;     padding-bottom: 6px;     background: blue;     color: white;     box-shadow: 0 0 4px rgba(0,0,0,0.4);     left: 170px;     display: none; } #ul-wrapper { 	width: 1000px; 	height: 180px; 	display: none; }
+} 
+#fold {
+    top: 0px;
+    left: -30px; 
+} 
+#bet {   
+    top: -41px;     
+    left: 190px; 
+}
+.button {
+    position: relative;
+    height: 23px;   
+    width: 70px;    
+    font-family: arial, sans-serif;  
+    font-size: 10pt;
+    font-weight: bold;
+    padding-top: 12px;   
+    padding-bottom: 6px;    
+    background: #007FFF;   
+    color: white;   
+    box-shadow: 0 0 4px rgba(0,0,0,0.4); 
+    display: none;
+    cursor: default;
+}
+#ul-wrapper {
+    width: 1000px;
+    height: 180px;
+    display: none;
+}
+#check {
+    top: -83px;
+    left: 80px;
+}
 </style>
-<script src="jquery.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
 <script type="text/javascript">
 $(document).ready(function() {
     var doneAnimating = false;
@@ -398,7 +430,7 @@ $(document).ready(function() {
     function sortMD(a,b) {
         // this sorts the array using the second element    
         return ((a[1] < b[1]) ? -1 : ((a[1] > b[1]) ? 1 : 0));
-    }
+    }
     function Deck() {
         var deck = new Array();
         var seedArray = new Array();
@@ -416,7 +448,7 @@ $(document).ready(function() {
             } else {
                 return "Error: deck already initialized."
             }
-        };
+        };
         this.shuffle = function() {
             if(this.isSetup() == true) {
                 var tempDeck = new Array();
@@ -426,8 +458,8 @@ $(document).ready(function() {
                     secArray.push(i);
                     secArray.push(seed);
                     seedArray.push(secArray);
-                }
-                seedArray.sort(sortMD);
+                }
+                seedArray.sort(sortMD);
                 for(var d = 0; d < deck.length; d++) {
                     index = seedArray[d][0];
                     tempDeck[d] = deck[index];
@@ -448,13 +480,19 @@ $(document).ready(function() {
             }
         };
         
-        this.update = function(name,deckstr) {
+        this.update = function(name,deckstr,hand) {
             if(name != "") {
-                if(deckstr == "") {
-                    
-                } else if(typeof deckstr == "string") {
+                if(typeof deckstr == "string" || deckstr == "") {
                     $.post("updatedeck.php",
-                           {name: name, deck: deckstr}
+                           {name: name, deck: deckstr, hand: hand, playernum: playernum},
+                           function(data) {
+                               var obj = $.parseJSON(data);
+                               if(obj != null) {
+                                   if(obj.deck != null && obj.deck != undefined) {
+                                       deck = unserialize(obj.deck);
+                                   }
+                               }
+                           }
                     );
                 }
             }
@@ -473,7 +511,49 @@ $(document).ready(function() {
         $("#enter").text("Enter");
         //$("ul").css("display","block");
         //playerhand.show(0);
-    }	 function waiting() {		 var isTurn = setInterval(function() {		 						      $.post("checkturn.php",		 						      	     {name: name},		 						      	     function(data) {		 						      	         var obj = $.parseJSON(data);		 						      	     }		 						      	     );		 						  }, 2000);	 }
+    }	 
+    function waiting() {
+        var isTurn = setInterval(function() {
+            $.post("checkturn.php",	
+                   {name: name},		 		
+                   function(data) {	
+                        var obj = $.parseJSON(data);
+                        turn = obj.turn;
+                        state = obj.stage;
+                        pot = obj.pot;
+                        console.log(pot);
+                        if(turn == playernum) {
+                            move = obj.move;
+                            $("#status").html("Your turn <p>" + opponent + " " + move);
+                            didBet = false;
+                            betindex = indexOf("bet");
+                            if(betindex >= 0) {
+                                didBet = true;
+                            }
+                            $("#pot").text("Pot: " + pot);
+                            if(state == "betting") {
+                                $("#fold").text("Fold").css({"background":"#007FFF","box-shadow":"0 0 4px rgba(0,0,0,0.4)","display":"block"});    
+                                $("#bet").text("Bet").css({"background":"#007FFF","box-shadow":"0 0 4px rgba(0,0,0,0.4)","display":"block"});
+                                $("#raise").text("Raise").css({"background":"#007FFF","box-shadow":"0 0 4px rgba(0,0,0,0.4)","display":"block"});
+                                if(!didBet) {
+                                    $("#call").attr("id","check");
+                                    $("#check").text("Check").css({"background":"#007FFF","box-shadow":"0 0 0 black","display":"block"});
+                                    game.setState(state);
+                                } else {
+                                    $("#call").text("Call").css({"background":"#007FFF","box-shadow":"0 0 4px rgba(0,0,0,0.4)","display":"block"});
+                                }
+                            }
+                            stop();
+                        } else {
+                            $("#status").text("Waiting for " + opponent);
+                        }
+                    }
+                    );
+        }, 2000);
+        function stop() {
+            clearInterval(isTurn);
+        }
+    }
     
     function Hand() {
         var hand = new Array();
@@ -481,6 +561,13 @@ $(document).ready(function() {
         this.deal = function () {
             if (game.getDeck().length > 0 && (hand.length < 1 || hand.length === undefined)) {
                 hand = game.getDeck().splice(0,5);
+                for(card in hand) {
+                    if(parseFloat(hand[card]) < 2) {
+                        tcard = parseFloat(hand[card]);
+                        tcard += 13;
+                        hand[card] = tcard;
+                    }
+                }
             } else {
                 return "Error: hand already dealt";
             }
@@ -488,7 +575,7 @@ $(document).ready(function() {
         
         this.show = function(i) {
             hand.sort(function(a,b) { return a-b} );
-            if(i <= 4 && i >= 0) {				 $("#ul-wrapper").css("display","block");
+            if(i <= 4 && i >= 0) {				 $("#ul-wrapper").css("display","block");
                 $("ul").css("display","block");
                 var top;
                 c1 = hand[i];
@@ -542,20 +629,24 @@ $(document).ready(function() {
                         doneAnimating = true;
                         turn = game.checkTurn();
                         if(turn == playernum) {
-                            $("#status").text("Your turn");							 if(game.getState() == "betting") {							 	 $("#fold").text("Fold");							 	 $("#bet").text("Bet");							 	 $("#fold").css("display","block");							     $("#bet").css("display","block");							 }
+                            if(game.getState() == "betting") {
+                                $("#fold").text("Fold").css("display","block");	
+                                $("#bet").text("Bet").css("display","block");
+                                $("#check").text("Check").css("display","block");
+                            }
                         } else {
-                            $("#status").text(opponent + "'s turn");							 waiting();
+                            waiting();
                         }
                     }
                 }});
             }
-        };		 
+        };		 
         function checkFace(cnum) {
             if(cnum <= 10 && cnum != 1) {
                 return cnum;
             } else {
                 switch(cnum) {
-                    case 1:
+                    case 14:
                         cnum = "A";
                         return cnum;
                     case 11:
@@ -622,7 +713,7 @@ $(document).ready(function() {
                 if($("#card" + i).is(":animated")) {
                     go = false;
                 } 
-            }
+            }
             if(!$(this).is(":animated") && doneAnimating && go && $(this).attr("clicked") == "false") {
                 var top = $(this).css("top");
                 top.replace("px","");
@@ -677,16 +768,19 @@ $(document).ready(function() {
                                                console.log("You have successfully started a game with " + data);
                                                opponent = data;
                                                stopCheck();
-                                               $("#error").css({"top":"2000px","opacity":"0"});												game.setState("betting");
+                                               $("#error").css({"top":"2000px","opacity":"0"});
+                                               $("#call").attr("id","check");
+                                               game.setState("betting");
                                                playerhand.show(0);
+                                               $("#status").text("Your turn");
                                                $("#pot").text("Pot: 100");
                                                $("#money").text("Money: 4950");
                                                playernum = 1;
                                            }
                                        });
                             }, 2000)
-                            //playerhand.show(0);
                        } else if(data == "canstart") {
+                           $("#error").css("display","none");
                            $("#name-wrapper").css("display","none");
                            $.post("getcards.php",
                                   {name: name},
@@ -695,14 +789,17 @@ $(document).ready(function() {
                                       var obj = $.parseJSON(data);
                                       deckArray = unserialize(obj.deck);
                                       opponent = obj.opponent;
-                                      game.setDeck(deckArray);									   game.setState("betting");
+                                      game.setDeck(deckArray);
+                                      game.setState("waiting");
                                       playerhand.deal();
                                       playerhand.show(0);
                                       $("#pot").text("Pot: 100");
                                       $("#money").text("Money: 4950");
-                                      game.updateDeck(name);
+                                      game.updateDeck(name,playerhand.getHand());
+                                      waiting();
                                   });
                        } else {
+                            $("#error").css("display","block");
                             $("#error").text("Sorry, that name is taken. Please enter another one. " + data);
                        }
                        function stopCheck() {
@@ -745,14 +842,14 @@ $(document).ready(function() {
         deck.shuffle();
         var state = "notready";
         var turn = 1;
-        var toggle = true;
+        var toggle = true;
         this.setDeck = function(toSet) {
             if(toSet instanceof Array) {
                 deck.setDeck(toSet);
             } else {
                console.log("Error: type mismatch.");
             }
-        }
+        }
         this.setup = function(name) {
             playerhand.deal();
             deckstr = serialize(deck.getDeck());
@@ -766,49 +863,92 @@ $(document).ready(function() {
                             console.log(data);
                         }
                    });
-        }
+        }
         this.setState = function(sSet) {
             state = sSet;
-        }
+        }
         this.getState = function() {
             return state;
         }
         
         this.getDeck = function() {
             return deck.getDeck();
-        }
-        this.updateDeck = function(name) {
+        }
+        this.updateDeck = function(name,hand) {
             str = serialize(deck.getDeck());
-            deck.update(name,str);
-        }
+            if(hand == null) {
+                hand = "";
+                str = "";
+                deck.update(name,str,hand)
+            } else {
+                hand = serialize(hand);
+                deck.update(name,str,hand);
+            }
+        }
         this.checkTurn = function() {
             return turn;
-        }
+        }
         this.switchTurn = function() {
-            if(toggle) {
-                turn = 2;
-                $.post("updateturn.php",
-                       {turn: turn},
-                       function(data) {
-                           waiting();
-                       }
-                );
-            } else {
-                turn = 1;
-            }
+            turn = toggle ? 2 : 1;
             toggle = !toggle;
         }
-    }
-    var playerhand = new Hand();
+    }
+    var playerhand = new Hand();
+    
     $("#enter").click(function() {
         nameSend();
-    });
+    });
+    
     $("#name-input").keyup(function(event) {
         if(event.which === 13) {
             nameSend();
         }
-    });	 $("#bet").click(function() {	 	 bet = prompt("How much do you want to bet?");	 	 if(bet != "") {	 	 	 $.post("processturn.php",	 	 	 		{type: 'bet', bet: bet, name: name, playernum: playernum},	 	 	 		function(data) {	 	 	 			 var obj = $.parseJSON(data);	 	 	 			 error = obj.error;	 	 	 			 okay = obj.okay;	 	 	 			 pot = obj.pot;	 	 	 			 money = obj.money;	 	 	 			 if(okay == 1) {	 	 	 			 	$("#pot").text("Pot: " + pot);	 	 	 			 	$("#money").text("Money: " + money);	 	 	 			 } else if(error != "") {	 	 	 			 	alert(error);	 	 	 			 }	 	 	 		}	 	 	 		);	 	 }	 });
-});
+    });	 
+    
+    $("#bet").click(function() {
+        if(game.getState() != "waiting") {
+            bet = prompt("How much do you want to bet?");
+            if(bet != "") {
+                $.post("processturn.php",
+                       {type: 'bet', bet: bet, name: name, playernum: playernum},
+                       function(data) {
+                            var obj = $.parseJSON(data);
+                            okay = obj.okay;
+                            pot = obj.pot;	 
+                            money = obj.money;	 
+                            if(okay == 1) {	 	 	 
+                                $("#pot").text("Pot: " + pot);
+                                $("#money").text("Money: " + money);
+                                $("#bet").css({"background":"#EEE","box-shadow":"0 0 0 black"});
+                                $("#check").css({"background":"#EEE","box-shadow":"0 0 0 black"});
+                                $("#fold").css({"background":"#EEE","box-shadow":"0 0 0 black"});
+                                $("#raise").css({"background":"#EEE","box-shadow":"0 0 0 black"});
+                                game.switchTurn();
+                                game.setState("waiting");
+                                waiting();
+                            } else if(obj.error != null) {
+                                alert(obj.error);
+                            } else {
+                                console.log(data);
+                            }
+                        }	 
+                );	
+            }
+        }
+    });
+    
+    $("#check").click(function() {
+        if(game.getState() != "waiting") {
+            $.post("processturn.php",
+                   {type: 'check', name: name, playernum: playernum},
+                   function(data) {
+                        
+                   }
+            );
+        }
+    });
+    
+});
 </script>
 <html>
 <title>Poker</title>
@@ -820,11 +960,10 @@ $(document).ready(function() {
 <input type="text" id="name-input">
 <div id="enter"></div>
 </div>
-</div id="call"></div>
 <div id="keep"></div>
 <div id="discard"></div>
 <p>
-<div id="startgame">Start Game</div> <div id="ul-wrapper" style="position: absolute; top: 30%; left: -5%;">
+<div id="startgame">Start Game</div> <div id="ul-wrapper" style="position: absolute; top: 30%; left: -5%;">
 <ul>
   <li id="card1" style="position: relative; left: -20%; top: 150px;" clicked="false">
     <span class="number"></span><div class="suit"></div>
@@ -840,7 +979,11 @@ $(document).ready(function() {
   </li>
   <li id="card5" style="position: relative; top: 100px; left: 28%" clicked="false">
     <span class="number"></span><div class="suit"></div>
-  </li>   <span id="money"></span>   <span id="pot"></span>
-</ul> <div id="fold"></div><div id="bet"></div> </div>
+  </li>   <span id="money"></span>   <span id="pot"></span>
+</ul> 
+<div id="fold" class="button"></div>
+<div id="bet" class="button"></div>
+<div id="call" class="button"></div>
+</div>
 </html>
 </center>
